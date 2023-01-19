@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import *
 
-entree=tk.StringVar
+#entree = tk.StringVar
 
 
 win = tk.Tk()
@@ -16,53 +16,77 @@ center_x = int(screen_width/2 - window_width / 2)
 center_y = int(screen_height/2 - window_height / 2)
 win.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
 win.iconbitmap('./ico/gui.ico')
-tk.Label(win, text='La Plateforme.io : Convertisseur de Devise', bg='#ba5e18', font=('Courier 14 underline')).pack(anchor=NW, ipady=1, ipadx=1)
+tk.Label(win, text = 'La Plateforme.io : Convertisseur de Devise', bg = '#ba5e18', font = ('Courier 14 underline')).pack(anchor = NW, ipady = 1, ipadx = 1)
 
-tk.Label(win, text='Valeur à convertir : ', bg='grey').pack(pady=(25, 0))
+tk.Label(win, text = 'Valeur à convertir : ', bg = 'grey').pack(pady = (25, 0))
 
-a=Entry(win, width = 15)
+a = Entry(win, width = 15)
 a.pack()
 
-tk.Label(win, text='De cette devise : ', bg='grey').pack(pady=(25, 0))
-listeDevise=["Euro (€)","Dollar US ($)","Livre Sterlings (£)"]
+tk.Label(win, text = 'De cette devise : ', bg = 'grey').pack(pady = (25, 0))
+listeDevise = ["Euro (€)","Dollar US ($)","Livre Sterlings (£)"]
 i = listeDevise
-listeCombo1 = ttk.Combobox(win, values=i, state="readonly")
+listeCombo1 = ttk.Combobox(win, values = i, state = "readonly")
 listeCombo1.current(None)
 listeCombo1.pack()
 
-tk.Label(win, text='Vers cette devise : ', bg='grey').pack(pady=(25, 0))
+tk.Label(win, text = 'Vers cette devise : ', bg = 'grey').pack(pady = (25, 0))
 j = listeDevise
-listeCombo2 = ttk.Combobox(win,  values=j, state="readonly")
+listeCombo2 = ttk.Combobox(win,  values = j, state = "readonly")
 listeCombo2.current(None)
 listeCombo2.pack()
 
-tk.Label(win, text='Conversion : ', bg='grey').pack(pady=(10, 0))
-Tot = Text(win, state='disabled', width=15, height=1)
-Tot.configure(state='normal')
-Tot.config(state=DISABLED, font=('Calibri 15'))
+tk.Label(win, text = 'Conversion : ', bg = 'grey').pack(pady = (10, 0))
+Tot = Label(win, state='disabled', width = 15, height = 1)
 Tot.pack()
 
 def Conv():
-    dollar = 1.08
-    livre = 0.89
+    ED = 1.08
+    EL = 0.88
+    DE = 0.92
+    DL = 0.81
+    LE = 1.14
+    LD = 1.23
     resultat = 0
-    integral=a.get()
-    valeur=float(integral)
-    if i == 0 and j == 1:
-        resultat=valeur * dollar
-    elif j == 2:
-        resultat=valeur * livre
-    elif i == 1 and j == 0:
-        resultat=valeur / dollar
-    elif j == 2:
-        resultat=valeur * livre
-    elif i == 2 and j == 0:
-        resultat=valeur / livre
-    elif j == 1:
-        resultat=valeur * dollar
-    elif i == j:
+    integral = a.get()
+    valeur = float(integral)
+    Combo1 = listeCombo1.get()
+    Combo2 = listeCombo2.get()
+    symbol1 = "€"
+    symbol2 = "$"
+    if Combo1 == Combo2:
         resultat = ("erreur: conversion inutile, la même devise est sélectionnée en entrée et en sortie.")
-    print(resultat)
+    elif Combo1 == "Euro (€)" and Combo2 == "Dollar US ($)":
+        symbol1 = "€"
+        symbol2 = "$"
+        resultat=valeur * ED
+    elif Combo2 == "Livre Sterlings (£)":
+        symbol2 = "£"
+        resultat=valeur * EL
+    elif Combo1 == "Dollar US ($)" and Combo2 == "Euro (€)":
+        symbol1 = "$"
+        symbol2 = "€"
+        resultat=valeur * DE
+    elif Combo2 == "Livre Sterlings (£)":
+        symbol2 = "£"
+        resultat=valeur * DL
+    elif Combo1 == "Livre Sterlings (£)" and Combo2 == "Euro (€)":
+        symbol1 = "£"
+        symbol2 = "€"
+        resultat=valeur * LE
+    elif Combo2 == "Dollar US ($)":
+        symbol2 = "$"
+        resultat=valeur * LD
+    Tot.config(text=resultat)
+    fichier = open("Historique.txt", "a")
+    fichier.write(str(valeur))
+    fichier.write( symbol1 )
+    fichier.write(" -> ")
+    fichier.write(str(resultat))
+    fichier.write( symbol2 )
+    fichier.write("\n")
+    fichier.close()
+
 
 button = ttk.Button(win, text="Convertir", command =Conv)
 button.pack(pady=(15, 5))
